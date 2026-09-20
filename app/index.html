@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Varia — YouTube kanal keşfi</title>
+<meta name="description" content="Varia kataloğunu tarayıcıdan keşfet: konu raflarında öne çıkan YouTube kanalları, rastgele kanal için zar, isme göre arama.">
+<link rel="canonical" href="https://varia.life/app/">
+<meta name="theme-color" content="#0C0E13">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="robots" content="index,follow">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Varia">
+<meta property="og:url" content="https://varia.life/app/">
+<meta property="og:title" content="Varia — YouTube kanal keşfi">
+<meta property="og:description" content="Varia kataloğunu tarayıcıdan keşfet: konu rafları, rastgele kanal, arama.">
+<meta property="og:image" content="https://varia.life/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Tasarim jetonlari — yuklenen mockup'tan olculdu */
+:root{
+  --bg:#0C0E13; --panel:#161A21; --raised:#1F242E; --sunken:#12161D;
+  --line:#242A36; --line2:#333A48;
+  --ink:#F5F7FA; --muted:#868D9B;
+  --accent:#FF6A3D; --accent2:#FF8B66;
+  --ui:-apple-system,system-ui,"Segoe UI",Roboto,sans-serif;
+  --display:"Space Grotesk",var(--ui);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font:400 14px/1.5 var(--ui);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+img{display:block;max-width:100%}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.shell{display:flex;min-height:100vh}
+
+/* --- kenar cubugu --- */
+.side{width:236px;flex:none;background:var(--panel);border-right:1px solid var(--line);
+  display:flex;flex-direction:column;padding:22px 0 18px;position:sticky;top:0;height:100vh}
+.brand{padding:0 20px;font:500 24px/1 var(--display);letter-spacing:-.01em}
+.brand span{color:var(--accent)}
+.nav{display:flex;flex-direction:column;gap:2px;margin-top:28px;padding:0 12px}
+.nav button{position:relative;display:flex;align-items:center;gap:11px;height:42px;padding:0 12px;
+  border-radius:10px;font:500 13.5px/1 var(--ui);color:var(--muted);text-align:left}
+.nav button:hover{background:var(--raised);color:var(--ink)}
+.nav button[aria-current="page"]{background:rgba(255,106,61,.10);color:var(--ink)}
+.nav button[aria-current="page"]::before{content:"";position:absolute;left:0;top:11px;width:3px;height:20px;
+  border-radius:2px;background:var(--accent)}
+.side .fill{flex:1}
+.langbox{margin:0 12px 12px;padding:13px 14px;border-radius:12px;background:var(--sunken);border:1px solid var(--line)}
+.langbox h2{font:500 9.5px/1 var(--display);letter-spacing:.11em;color:var(--muted);text-transform:uppercase}
+.chips{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.chip{padding:4px 9px;border-radius:999px;background:var(--raised);border:1px solid var(--line);
+  font:500 11px/1.3 var(--ui);color:var(--muted)}
+.chip[aria-pressed="true"]{background:rgba(255,106,61,.13);border-color:rgba(255,106,61,.3);color:var(--accent)}
+.getapp{margin:0 12px;padding:11px 12px;border-radius:12px;background:var(--raised);border:1px solid var(--line);
+  display:flex;align-items:center;gap:10px}
+.getapp img{width:30px;height:30px;border-radius:9px;flex:none}
+.getapp b{display:block;font:500 12.5px/1.3 var(--ui)}
+.getapp small{display:block;font:400 11px/1.3 var(--ui);color:var(--muted)}
+
+/* --- ana sutun --- */
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.top{height:64px;flex:none;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:16px;
+  padding:0 28px;background:#101319;position:sticky;top:0;z-index:5}
+.search{flex:1;max-width:460px;height:38px;border-radius:10px;background:var(--panel);border:1px solid var(--line);
+  display:flex;align-items:center;gap:9px;padding:0 12px}
+.search input{flex:1;background:none;border:0;color:var(--ink);font:400 13px/1 var(--ui);outline:none}
+.search input::placeholder{color:var(--muted)}
+.seg{display:flex;padding:3px;border-radius:9px;background:var(--panel);border:1px solid var(--line)}
+.seg button{padding:5px 11px;border-radius:6px;font:600 11px/1 var(--display);letter-spacing:.04em;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--raised);color:var(--ink)}
+.content{flex:1;min-height:0;padding:22px 28px 56px;display:flex;flex-direction:column;gap:32px}
+
+/* --- raflar --- */
+.shelf h2{font:600 15px/1.2 var(--display);letter-spacing:-.01em}
+.shelf .note{font:400 12px/1.4 var(--ui);color:var(--muted);margin-top:3px}
+.row{display:grid;grid-template-columns:repeat(auto-fill,minmax(236px,1fr));gap:14px;margin-top:14px}
+.card{text-align:left;width:100%;padding:16px;border-radius:16px;background:var(--panel);border:1px solid var(--line);
+  display:flex;flex-direction:column;gap:10px;transition:border-color .15s,transform .15s}
+.card:hover{border-color:var(--line2);transform:translateY(-2px)}
+.card .head{display:flex;align-items:center;gap:11px;min-width:0}
+.avatar{width:44px;height:44px;flex:none;border-radius:22px;background:var(--raised);object-fit:cover}
+.card .t{font:500 13.5px/1.35 var(--ui);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card .s{font:400 11.5px/1.3 var(--ui);color:var(--muted);margin-top:2px}
+.card .b{font:400 12.5px/1.5 var(--ui);color:var(--muted);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.9em}
+.gem{align-self:flex-start;padding:3px 8px;border-radius:999px;background:rgba(255,106,61,.13);
+  border:1px solid rgba(255,106,61,.3);font:500 10px/1.3 var(--ui);color:var(--accent)}
+
+/* --- zar --- */
+.dice{padding:26px;border-radius:20px;border:1px solid var(--line2);background:var(--panel);
+  display:flex;flex-direction:column;align-items:flex-start;gap:14px}
+.btn{height:40px;padding:0 18px;border-radius:10px;background:var(--accent);color:#14100E;
+  font:600 13px/1 var(--ui);display:inline-flex;align-items:center;gap:8px}
+.btn:hover{background:var(--accent2)}
+.btn.ghost{background:rgba(255,106,61,.12);border:1px solid rgba(255,106,61,.32);color:var(--accent)}
+
+/* --- detay --- */
+.detail{display:flex;flex-direction:column;gap:22px;max-width:860px}
+.dhead{display:flex;gap:18px;align-items:center}
+.dhead img{width:92px;height:92px;border-radius:46px;flex:none;background:var(--raised)}
+.dhead h1{font:600 24px/1.2 var(--display);letter-spacing:-.01em}
+.dhead .u{color:var(--muted);font:400 13px/1.4 var(--ui);margin-top:4px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px}
+.stat{padding:14px;border-radius:12px;background:var(--panel);border:1px solid var(--line)}
+.stat b{display:block;font:600 17px/1.2 var(--display)}
+.stat small{display:block;font:400 11px/1.3 var(--ui);color:var(--muted);margin-top:4px}
+.vids{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.vid{border-radius:12px;overflow:hidden;background:var(--panel);border:1px solid var(--line);display:block}
+.vid img{width:100%;aspect-ratio:16/9;object-fit:cover;background:var(--raised)}
+.vid .vt{padding:10px 12px 12px;font:500 12.5px/1.4 var(--ui);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.vid .vm{padding:0 12px 12px;font:400 11px/1.3 var(--ui);color:var(--muted)}
+h3.sec{font:600 14px/1.2 var(--display);margin-bottom:10px}
+.desc{color:var(--muted);font:400 13.5px/1.6 var(--ui);white-space:pre-wrap}
+
+.attrib{color:var(--muted);font:400 11.5px/1.6 var(--ui);border-top:1px solid var(--line);padding-top:16px}
+.attrib a{color:var(--muted);text-decoration:underline}
+.msg{color:var(--muted);font:400 13px/1.6 var(--ui);padding:18px 0}
+.skeleton{border-radius:16px;background:linear-gradient(90deg,var(--panel),var(--raised),var(--panel));
+  background-size:200% 100%;animation:sh 1.2s linear infinite;height:148px}
+@keyframes sh{to{background-position:-200% 0}}
+
+@media (max-width:860px){
+  .shell{flex-direction:column}
+  .side{width:auto;height:auto;position:static;flex-direction:row;align-items:center;gap:12px;
+    padding:12px 16px;border-right:0;border-bottom:1px solid var(--line);overflow-x:auto}
+  .nav{flex-direction:row;margin:0;padding:0}
+  .langbox,.getapp,.side .fill{display:none}
+  .top{padding:0 16px;gap:10px}
+  .content{padding:18px 16px 48px}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="side">
+    <div class="brand">varia<span>.</span></div>
+    <nav class="nav" id="nav"></nav>
+    <div class="fill"></div>
+    <div class="langbox">
+      <h2 id="langHead"></h2>
+      <div class="chips" id="langChips"></div>
+    </div>
+    <a class="getapp" href="https://apps.apple.com/app/id6796433044">
+      <img src="/apple-touch-icon.png" alt="" width="30" height="30">
+      <span><b id="getAppT"></b><small id="getAppS"></small></span>
+    </a>
+  </aside>
+
+  <div class="main">
+    <header class="top">
+      <form class="search" id="searchForm" role="search">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#868D9B" stroke-width="2" aria-hidden="true">
+          <circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path>
+        </svg>
+        <input id="q" type="search" autocomplete="off">
+      </form>
+      <div class="seg" id="uiLang"></div>
+    </header>
+    <main class="content" id="view"></main>
+  </div>
+</div>
+
+<script>
+/* ------------------------------------------------------------------ veri
+   Supabase'e dogrudan, YAYINLANABILIR anahtarla baglaniyoruz.
+   Bu anahtar istemci kodunda durmak icin tasarlandi: channels ve shelves
+   tablolarinda yalnizca SELECT izni var (RLS) ve hassas kolonlar
+   (discovered_by_user_id, banner_url) anon rolune hic verilmemis.
+   Yani tarayiciya sizabilecek fazladan bir sey yok.                       */
+const SB  = "https://qfxuemwstrqgksclnlwn.supabase.co/rest/v1";
+const KEY = "sb_publishable_xovTcxLbGn9DTsHMrUrE9w_YiFofjPS";
+
+const KANAL_ALAN = "id,title,custom_url,thumbnail_url,subscriber_count,video_count," +
+                   "blurb,description,topics,detected_language,is_hidden_gem," +
+                   "quality_score,hd_ratio,last_video_at,top_videos,rating_avg,rating_count";
+
+async function sorgu(yol) {
+  const r = await fetch(SB + yol, { headers: { apikey: KEY, Authorization: "Bearer " + KEY } });
+  if (!r.ok) throw new Error("veri alinamadi (" + r.status + ")");
+  return r.json();
+}
+
+/* ------------------------------------------------------------------ metin */
+const M = {
+  tr: {
+    kesfet:"Keşfet", zar:"Zar at", ara:"Ara",
+    icerikDili:"İÇERİK DİLİ", uygulama:"iPhone uygulaması", ucretsiz:"App Store'da ücretsiz",
+    araYer:"Kanal ara…", yukleniyor:"Yükleniyor…", sonucYok:"Sonuç bulunamadı.",
+    gem:"Gizli cevher", abone:"abone", video:"video",
+    zarBaslik:"Ne izleyeceğini bilmiyor musun?", zarAlt:"Katalogdan rastgele bir kanal getirelim.",
+    zarBtn:"Zar at", tekrarAt:"Tekrar at",
+    ytAc:"YouTube'da aç", hakkinda:"Hakkında", sonVideolar:"Son videolar",
+    kalite:"Kalite", hd:"HD oranı", sonYukleme:"Son yükleme", puan:"Puan",
+    araBaslik:"Arama sonuçları", hata:"Bir şeyler ters gitti.",
+    geri:"← Geri", rafYok:"Bu dilde henüz raf yok.",
+    atif:"Kanal bilgileri YouTube API Hizmetleri üzerinden alınmıştır. Varia bağımsız bir uygulamadır; YouTube veya Google LLC ile bağlantılı, onlar tarafından onaylanmış ya da desteklenen bir ürün değildir. YouTube, Google LLC’nin tescilli markasıdır.",
+  },
+  en: {
+    kesfet:"Discover", zar:"Roll the dice", ara:"Search",
+    icerikDili:"CONTENT LANGUAGE", uygulama:"iPhone app", ucretsiz:"Free on the App Store",
+    araYer:"Search channels…", yukleniyor:"Loading…", sonucYok:"No results.",
+    gem:"Hidden gem", abone:"subscribers", video:"videos",
+    zarBaslik:"Not sure what to watch?", zarAlt:"We will pull a random channel from the catalogue.",
+    zarBtn:"Roll the dice", tekrarAt:"Roll again",
+    ytAc:"Open on YouTube", hakkinda:"About", sonVideolar:"Recent videos",
+    kalite:"Quality", hd:"HD ratio", sonYukleme:"Last upload", puan:"Rating",
+    araBaslik:"Search results", hata:"Something went wrong.",
+    geri:"← Back", rafYok:"No shelves for this language yet.",
+    atif:"Channel information is retrieved through the YouTube API Services. Varia is an independent application. It is not affiliated with, endorsed by or sponsored by YouTube or Google LLC. YouTube is a trademark of Google LLC.",
+  }
+};
+
+const RAF_TR = {
+  hidden_gems:"Gizli cevherler", lifestyle:"Yaşam", education:"Yeni bir şey öğren",
+  entertainment:"Saf eğlence", hobbies:"Hobi atölyesi", music:"Henüz duymadığın müzik",
+  film:"Film & dizi sohbeti", tech:"Teknoloji radarı", gaming:"Oyun köşesi",
+  society:"Toplum & fikirler", health:"Sağlık & iyi yaşam", travel:"Dünyayı gez",
+  food:"Mutfak", auto:"Otomobil", fitness:"Form tut", business:"İş & kariyer",
+  sports:"Spor", animals:"Hayvanlar", style:"Stil", science:"Bilim",
+  arts:"Sanat", comedy:"Komedi", animation:"Animasyon"
+};
+
+/* icerik dilleri — katalogta rafi olan diller */
+const DILLER = [
+  ["tr","Türkçe"],["en","English"],["de","Deutsch"],["es","Español"],["fr","Français"],
+  ["it","Italiano"],["pt","Português"],["ru","Русский"],["ar","العربية"],
+  ["hi","हिन्दी"],["id","Indonesia"],["ja","日本語"],["ko","한국어"]
+];
+
+/* ------------------------------------------------------------------ durum */
+const durum = {
+  ui:  localStorage.getItem("varia.ui")  || (navigator.language || "tr").slice(0,2) === "tr" ? "tr" : "en",
+  dil: localStorage.getItem("varia.dil") || "tr",
+  sayfa: "kesfet",
+};
+if (!M[durum.ui]) durum.ui = "en";
+const t = () => M[durum.ui];
+
+/* ------------------------------------------------------------------ yardim */
+const el = (s) => document.querySelector(s);
+const kacar = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, c =>
+  ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
+
+function sayi(n) {
+  n = Number(n || 0);
+  const yer = durum.ui === "tr" ? "tr-TR" : "en-US";
+  if (n >= 1e6) return (n/1e6).toLocaleString(yer, {maximumFractionDigits:1}) + (durum.ui==="tr"?" Mn":"M");
+  if (n >= 1e3) return (n/1e3).toLocaleString(yer, {maximumFractionDigits:1}) + (durum.ui==="tr"?" B":"K");
+  return n.toLocaleString(yer);
+}
+function tarih(iso) {
+  if (!iso) return "—";
+  const g = Math.floor((Date.now() - new Date(iso)) / 86400000);
+  if (durum.ui === "tr") return g <= 0 ? "bugün" : g === 1 ? "dün" : g < 30 ? g + " gün önce"
+    : g < 365 ? Math.floor(g/30) + " ay önce" : Math.floor(g/365) + " yıl önce";
+  return g <= 0 ? "today" : g === 1 ? "yesterday" : g < 30 ? g + " days ago"
+    : g < 365 ? Math.floor(g/30) + " months ago" : Math.floor(g/365) + " years ago";
+}
+const ytKanal = (c) => "https://www.youtube.com/" + (c.custom_url || "channel/" + c.id);
+const rafAdi  = (topic, baslik) => durum.ui === "tr" ? (RAF_TR[topic] || baslik || topic) : (baslik || topic);
+
+/* ------------------------------------------------------------------ kabuk */
+function kabuk() {
+  el("#nav").innerHTML = [["kesfet",t().kesfet],["zar",t().zar]].map(([k,ad]) =>
+    `<button data-git="${k}" ${durum.sayfa===k?'aria-current="page"':""}>${kacar(ad)}</button>`).join("");
+  el("#langHead").textContent = t().icerikDili;
+  el("#langChips").innerHTML = DILLER.map(([k,ad]) =>
+    `<button class="chip" data-dil="${k}" aria-pressed="${durum.dil===k}">${kacar(ad)}</button>`).join("");
+  el("#getAppT").textContent = t().uygulama;
+  el("#getAppS").textContent = t().ucretsiz;
+  el("#q").placeholder = t().araYer;
+  el("#uiLang").innerHTML = ["tr","en"].map(k =>
+    `<button data-ui="${k}" aria-pressed="${durum.ui===k}">${k.toUpperCase()}</button>`).join("");
+  document.documentElement.lang = durum.ui;
+}
+
+function atifBlogu() { return `<p class="attrib">${kacar(t().atif)}</p>`; }
+
+function kart(c) {
+  return `<button class="card" data-kanal="${kacar(c.id)}">
+    <div class="head">
+      <img class="avatar" loading="lazy" src="${kacar(c.thumbnail_url||"")}" alt="">
+      <div style="min-width:0">
+        <div class="t">${kacar(c.title)}</div>
+        <div class="s">${sayi(c.subscriber_count)} ${kacar(t().abone)}</div>
+      </div>
+    </div>
+    ${c.is_hidden_gem ? `<span class="gem">${kacar(t().gem)}</span>` : ""}
+    <div class="b">${kacar(c.blurb || "")}</div>
+  </button>`;
+}
+
+const iskelet = (n) => `<div class="row">${Array.from({length:n},()=>'<div class="skeleton"></div>').join("")}</div>`;
+
+/* ------------------------------------------------------------------ sayfalar */
+async function kanallariGetir(idler) {
+  if (!idler.length) return [];
+  const liste = idler.map(encodeURIComponent).join(",");
+  const veri = await sorgu(`/channels?id=in.(${liste})&select=${KANAL_ALAN}` +
+                           `&is_eligible=is.true&unavailable_at=is.null`);
+  const harita = new Map(veri.map(c => [c.id, c]));
+  return idler.map(id => harita.get(id)).filter(Boolean);
+}
+
+async function sayfaKesfet() {
+  el("#view").innerHTML = `<div class="shelf"><h2>${kacar(t().yukleniyor)}</h2>${iskelet(6)}</div>`;
+  const raflar = await sorgu(`/shelves?language=eq.${encodeURIComponent(durum.dil)}` +
+                             `&select=topic,title,channel_ids,position&order=position.asc&limit=10`);
+  if (!raflar.length) { el("#view").innerHTML = `<p class="msg">${kacar(t().rafYok)}</p>`; return; }
+
+  const parcalar = [];
+  for (const raf of raflar) {
+    // 12 kart gosteriyoruz ama rafta duran id'lerin bir kismi artik uygun
+    // degil (kanal video atmayi birakmis ya da YouTube'dan kalkmis olabilir).
+    // Bu yuzden fazladan cekip filtreden SONRA kesiyoruz, yoksa raf eksik kalir.
+    const idler = (raf.channel_ids || []).slice(0, 30);
+    const kanallar = (await kanallariGetir(idler)).slice(0, 12);
+    if (kanallar.length < 3) continue;
+    parcalar.push(`<section class="shelf"><h2>${kacar(rafAdi(raf.topic, raf.title))}</h2>
+      <div class="row">${kanallar.map(kart).join("")}</div></section>`);
+    el("#view").innerHTML = parcalar.join("") + atifBlogu();
+  }
+  if (!parcalar.length) el("#view").innerHTML = `<p class="msg">${kacar(t().rafYok)}</p>`;
+}
+
+async function sayfaZar(yeniden) {
+  const kutu = `<section class="dice">
+      <div><h2 style="font:600 18px/1.25 var(--display)">${kacar(t().zarBaslik)}</h2>
+      <p class="note" style="color:var(--muted);margin-top:6px">${kacar(t().zarAlt)}</p></div>
+      <button class="btn" id="zarBtn">🎲 ${kacar(yeniden ? t().tekrarAt : t().zarBtn)}</button>
+    </section>`;
+  el("#view").innerHTML = kutu + `<div id="zarSonuc"></div>`;
+  el("#zarBtn").onclick = zarAt;
+  if (yeniden) zarAt();
+}
+
+async function zarAt() {
+  const kutu = el("#zarSonuc");
+  kutu.innerHTML = iskelet(1);
+  try {
+    // rastgelelik: buyuk bir havuzdan sayfa secip icinden bir kanal cekiyoruz
+    const ofset = Math.floor(Math.random() * 400);
+    const veri = await sorgu(`/channels?select=${KANAL_ALAN}&is_hidden_gem=is.true` +
+      `&is_eligible=is.true&unavailable_at=is.null&blurb=not.is.null` +
+      `&detected_language=eq.${encodeURIComponent(durum.dil)}` +
+      `&order=quality_score.desc,id.asc&offset=${ofset}&limit=20`);
+    if (!veri.length) { kutu.innerHTML = `<p class="msg">${kacar(t().sonucYok)}</p>`; return; }
+    const c = veri[Math.floor(Math.random() * veri.length)];
+    kutu.innerHTML = `<div class="row" style="grid-template-columns:minmax(0,320px)">${kart(c)}</div>` + atifBlogu();
+  } catch (e) { kutu.innerHTML = `<p class="msg">${kacar(t().hata)}</p>`; }
+}
+
+async function sayfaArama(q) {
+  el("#view").innerHTML = `<section class="shelf"><h2>${kacar(t().araBaslik)}</h2>${iskelet(4)}</section>`;
+  const temiz = q.replace(/[%,()*]/g, " ").trim();
+  if (!temiz) { sayfaKesfet(); return; }
+  const veri = await sorgu(`/channels?select=${KANAL_ALAN}` +
+    `&title=ilike.*${encodeURIComponent(temiz)}*&is_eligible=is.true&unavailable_at=is.null` +
+    `&order=subscriber_count.desc&limit=24`);
+  el("#view").innerHTML = veri.length
+    ? `<section class="shelf"><h2>${kacar(t().araBaslik)}</h2>
+       <p class="note">${kacar(temiz)} · ${veri.length}</p>
+       <div class="row">${veri.map(kart).join("")}</div></section>` + atifBlogu()
+    : `<p class="msg">${kacar(t().sonucYok)}</p>`;
+}
+
+async function sayfaKanal(id) {
+  el("#view").innerHTML = iskelet(1);
+  const veri = await sorgu(`/channels?id=eq.${encodeURIComponent(id)}&select=${KANAL_ALAN}&limit=1`);
+  const c = veri[0];
+  if (!c) { el("#view").innerHTML = `<p class="msg">${kacar(t().sonucYok)}</p>`; return; }
+
+  const videolar = Array.isArray(c.top_videos) ? c.top_videos : [];
+  const istatistik = [
+    [sayi(c.subscriber_count), t().abone],
+    [sayi(c.video_count), t().video],
+    [c.hd_ratio == null ? "—" : Math.round(c.hd_ratio * 100) + "%", t().hd],
+    [tarih(c.last_video_at), t().sonYukleme],
+  ];
+  if (c.rating_count) istatistik.push([Number(c.rating_avg).toFixed(1) + "/5", t().puan]);
+
+  el("#view").innerHTML = `
+  <button class="btn ghost" id="geri" style="align-self:flex-start">${kacar(t().geri)}</button>
+  <article class="detail">
+    <header class="dhead">
+      <img src="${kacar(c.thumbnail_url||"")}" alt="" width="92" height="92">
+      <div>
+        <h1>${kacar(c.title)}</h1>
+        <div class="u">${kacar(c.custom_url||"")}${c.is_hidden_gem ? " · " + kacar(t().gem) : ""}</div>
+      </div>
+    </header>
+    <a class="btn" style="align-self:flex-start" href="${kacar(ytKanal(c))}" target="_blank" rel="noopener">
+      ${kacar(t().ytAc)}</a>
+    <div class="stats">${istatistik.map(([v,k]) =>
+      `<div class="stat"><b>${kacar(v)}</b><small>${kacar(k)}</small></div>`).join("")}</div>
+    ${c.description ? `<section><h3 class="sec">${kacar(t().hakkinda)}</h3>
+      <p class="desc">${kacar(c.description.slice(0, 900))}</p></section>` : ""}
+    ${videolar.length ? `<section><h3 class="sec">${kacar(t().sonVideolar)}</h3>
+      <div class="vids">${videolar.map(v => `
+        <a class="vid" href="https://www.youtube.com/watch?v=${kacar(v.id)}" target="_blank" rel="noopener">
+          <img loading="lazy" src="${kacar(v.thumbnail_url||"")}" alt="">
+          <div class="vt">${kacar(v.title)}</div>
+          <div class="vm">${sayi(v.view_count)} · ${kacar(tarih(v.published_at))}</div>
+        </a>`).join("")}</div></section>` : ""}
+    ${atifBlogu()}
+  </article>`;
+  el("#geri").onclick = () => history.back();
+}
+
+/* ------------------------------------------------------------------ yonlendirme */
+function git(hedef, degistirme) {
+  const y = hedef.startsWith("#") ? hedef : "#" + hedef;
+  if (degistirme) history.replaceState(null, "", y); else location.hash = y;
+  if (degistirme) yonlendir();
+}
+
+async function yonlendir() {
+  const h = (location.hash || "#kesfet").slice(1);
+  try {
+    if (h.startsWith("kanal/"))      { durum.sayfa = "kesfet"; kabuk(); await sayfaKanal(h.slice(6)); }
+    else if (h.startsWith("ara/"))   { durum.sayfa = "ara";    kabuk(); await sayfaArama(decodeURIComponent(h.slice(4))); }
+    else if (h === "zar")            { durum.sayfa = "zar";    kabuk(); await sayfaZar(false); }
+    else                             { durum.sayfa = "kesfet"; kabuk(); await sayfaKesfet(); }
+  } catch (e) {
+    el("#view").innerHTML = `<p class="msg">${kacar(t().hata)}</p>`;
+    console.error(e);
+  }
+  window.scrollTo(0, 0);
+}
+
+/* ------------------------------------------------------------------ olaylar */
+document.addEventListener("click", (e) => {
+  const kanal = e.target.closest("[data-kanal]");
+  if (kanal) { git("kanal/" + kanal.dataset.kanal); return; }
+  const nav = e.target.closest("[data-git]");
+  if (nav) { git(nav.dataset.git); return; }
+  const dil = e.target.closest("[data-dil]");
+  if (dil) { durum.dil = dil.dataset.dil; localStorage.setItem("varia.dil", durum.dil); kabuk(); yonlendir(); return; }
+  const ui = e.target.closest("[data-ui]");
+  if (ui) { durum.ui = ui.dataset.ui; localStorage.setItem("varia.ui", durum.ui); kabuk(); yonlendir(); return; }
+});
+el("#searchForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const q = el("#q").value.trim();
+  git(q ? "ara/" + encodeURIComponent(q) : "kesfet");
+});
+window.addEventListener("hashchange", yonlendir);
+
+kabuk();
+yonlendir();
+</script>
+</body>
+</html>
+

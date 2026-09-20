@@ -115,11 +115,11 @@ img{display:block;max-width:100%}
 .card{flex:0 0 262px;scroll-snap-align:start;text-align:left;border-radius:16px;background:var(--panel);
   border:1px solid var(--line);overflow:hidden;transition:border-color .15s,transform .15s}
 .card:hover{border-color:var(--line2);transform:translateY(-3px)}
-.card .cover{position:relative;aspect-ratio:3/1;background:linear-gradient(135deg,#1C2230,#141821);overflow:hidden}
+.card .cover{position:relative;aspect-ratio:16/9;background:linear-gradient(135deg,#1C2230,#141821);overflow:hidden}
 .card .cover .blur{position:absolute;inset:-20%;width:140%;height:140%;object-fit:cover;filter:blur(22px) saturate(1.3);opacity:.5}
 .card .cover img{width:100%;height:100%;object-fit:cover}
 .card .cover::after{content:"";position:absolute;inset:0;
-  background:linear-gradient(to top,rgba(22,26,33,.95),rgba(22,26,33,0) 62%)}
+  background:linear-gradient(to top,rgba(22,26,33,.85),rgba(22,26,33,0) 45%)}
 .card .cover img.av{object-fit:cover;position:absolute;left:14px;bottom:-18px;width:44px;height:44px;border-radius:22px;
   border:2.5px solid var(--panel);z-index:2;background:var(--raised)}
 .card .txt{padding:26px 14px 15px;display:flex;flex-direction:column;gap:6px}

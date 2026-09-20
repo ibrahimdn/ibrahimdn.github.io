@@ -115,7 +115,8 @@ img{display:block;max-width:100%}
 .card{flex:0 0 262px;scroll-snap-align:start;text-align:left;border-radius:16px;background:var(--panel);
   border:1px solid var(--line);overflow:hidden;transition:border-color .15s,transform .15s}
 .card:hover{border-color:var(--line2);transform:translateY(-3px)}
-.card .cover{position:relative;aspect-ratio:16/9;background:linear-gradient(135deg,#1C2230,#141821)}
+.card .cover{position:relative;aspect-ratio:3/1;background:linear-gradient(135deg,#1C2230,#141821);overflow:hidden}
+.card .cover .blur{position:absolute;inset:-20%;width:140%;height:140%;object-fit:cover;filter:blur(22px) saturate(1.3);opacity:.5}
 .card .cover img{width:100%;height:100%;object-fit:cover}
 .card .cover::after{content:"";position:absolute;inset:0;
   background:linear-gradient(to top,rgba(22,26,33,.95),rgba(22,26,33,0) 62%)}
@@ -234,7 +235,8 @@ async function sorgu(yol) {
 
 /* YouTube kapak gorselleri parametresiz gelir ve cok buyuk olabilir.
    `=w<genislik>` ekleyerek boyut istiyoruz; yt3 bunu destekliyor. */
-const kapak = (url, w) => url ? url + "=w" + w : "";
+const kapak = (url, w, serit) => !url ? "" :
+  url + "=w" + w + (serit ? "-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj" : "");
 
 /* ------------------------------------------------------------------ metin */
 const M = {
@@ -334,10 +336,12 @@ const atifBlogu = () => `<p class="attrib">${kacar(t().atif)}</p>`;
    one aldigi icin ekran bastan asagi ayni rozetle doluyordu ve rozet
    hicbir sey ayirt etmez hale gelmisti. */
 function kart(c, rozet) {
-  const kap = kapak(c.banner_url, 520);
+  const kap = kapak(c.banner_url, 640, true);
+  const avSrc = kacar(c.thumbnail_url || "");
   return `<button class="card" data-kanal="${kacar(c.id)}">
     <div class="cover">
-      ${kap ? `<img loading="lazy" src="${kacar(kap)}" alt="">` : ""}
+      ${kap ? `<img loading="lazy" src="${kacar(kap)}" alt="">`
+            : (avSrc ? `<img class="blur" loading="lazy" src="${avSrc}" alt="" aria-hidden="true">` : "")}
       ${rozet && c.is_hidden_gem ? `<span class="gem">${kacar(t().gem)}</span>` : ""}
       <img class="av" loading="lazy" src="${kacar(c.thumbnail_url||"")}" alt="" width="44" height="44">
     </div>
@@ -464,7 +468,7 @@ async function sayfaKanal(id) {
     [tarih(c.last_video_at), t().sonYukleme],
   ];
   if (c.rating_count) ist.push([Number(c.rating_avg).toFixed(1) + "/5", t().puan]);
-  const kap = kapak(c.banner_url, 1200);
+  const kap = kapak(c.banner_url, 1200, true);
 
   el("#view").innerHTML = `
   <div class="detail">

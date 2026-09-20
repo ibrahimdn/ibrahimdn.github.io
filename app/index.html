@@ -303,6 +303,9 @@ const iskelet = (n) => `<div class="row">${Array.from({length:n},()=>'<div class
 
 /* ------------------------------------------------------------------ sayfalar */
 async function kanallariGetir(idler) {
+  // TEKRAR ELEME: raflardaki id listesi tekrar icerebiliyor (crawler sayfalamasi
+  // bir donem siralamasizdi). Ayni kart yan yana iki kez cikmasin diye eliyoruz.
+  idler = [...new Set(idler)];
   if (!idler.length) return [];
   const liste = idler.map(encodeURIComponent).join(",");
   const veri = await sorgu(`/channels?id=in.(${liste})&select=${KANAL_ALAN}` +

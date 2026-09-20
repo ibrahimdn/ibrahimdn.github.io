@@ -196,6 +196,10 @@ img{display:block;max-width:100%}
 h3.sec{font:600 14px/1.2 var(--display);margin-bottom:10px}
 .desc{color:var(--muted);font:400 13.5px/1.6 var(--ui);white-space:pre-wrap}
 
+.reklam{margin-inline:28px;padding:10px 14px 14px;border-radius:14px;background:var(--sunken);
+  border:1px solid var(--line);min-height:120px}
+.reklamEtiket{display:block;font:500 9.5px/1 var(--display);letter-spacing:.11em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:8px}
 .attrib{color:var(--muted);font:400 11.5px/1.6 var(--ui);border-top:1px solid var(--line);
   padding:16px 28px 0;margin-inline:0}
 .attrib a{color:var(--muted);text-decoration:underline}
@@ -254,6 +258,16 @@ h3.sec{font:600 14px/1.2 var(--display);margin-bottom:10px}
    Supabase'e dogrudan, YAYINLANABILIR anahtarla. channels ve shelves
    tablolarinda yalnizca SELECT izni var; hassas kolon (discovered_by_user_id)
    anon rolune hic verilmemis, istenirse 401 donuyor.                        */
+/* ------------------------------------------------------------------ reklam
+   Google AdSense. `client` BOS oldugu surece sayfada reklamla ilgili
+   HICBIR SEY cizilmiyor, hicbir script yuklenmiyor, hicbir cerez
+   dusmuyor -- yani su an site reklamsiz.
+   Yayina almak icin: AdSense hesabi acildiktan sonra buraya
+   "ca-pub-XXXXXXXXXXXXXXXX" ve olusturulan birim kimligi yazilacak,
+   ayrica /ads.txt yayimlanacak ve GIZLILIK POLITIKASI guncellenecek
+   (bkz. site/reklam-plani.md). Uc adim birlikte yapilmali. */
+const ADSENSE = { client: "", slot: "" };
+
 const SB  = "https://qfxuemwstrqgksclnlwn.supabase.co/rest/v1";
 const KEY = "sb_publishable_xovTcxLbGn9DTsHMrUrE9w_YiFofjPS";
 
@@ -287,7 +301,7 @@ const M = {
     zarBtn:"Zar at", tekrarAt:"Tekrar at",
     ytAc:"YouTube'da aç", hakkinda:"Hakkında", sonVideolar:"Son videolar",
     hd:"HD oranı", sonYukleme:"Son yükleme", puan:"Puan",
-    araBaslik:"Arama sonuçları", hata:"Bir şeyler ters gitti.",
+    araBaslik:"Arama sonuçları", hata:"Bir şeyler ters gitti.", reklam:"Reklam",
     geri:"← Geri", rafYok:"Bu dilde henüz raf yok.", sola:"Sola kaydır", saga:"Sağa kaydır",
     atif:"Kanal bilgileri YouTube API Hizmetleri üzerinden alınmıştır. Varia bağımsız bir uygulamadır; YouTube veya Google LLC ile bağlantılı, onlar tarafından onaylanmış ya da desteklenen bir ürün değildir. YouTube, Google LLC’nin tescilli markasıdır.",
   },
@@ -301,7 +315,7 @@ const M = {
     zarBtn:"Roll the dice", tekrarAt:"Roll again",
     ytAc:"Open on YouTube", hakkinda:"About", sonVideolar:"Recent videos",
     hd:"HD ratio", sonYukleme:"Last upload", puan:"Rating",
-    araBaslik:"Search results", hata:"Something went wrong.",
+    araBaslik:"Search results", hata:"Something went wrong.", reklam:"Advertisement",
     geri:"← Back", rafYok:"No shelves for this language yet.", sola:"Scroll left", saga:"Scroll right",
     atif:"Channel information is retrieved through the YouTube API Services. Varia is an independent application. It is not affiliated with, endorsed by or sponsored by YouTube or Google LLC. YouTube is a trademark of Google LLC.",
   }
@@ -428,6 +442,31 @@ function heroKart(c) {
   </button>`;
 }
 
+function reklamKutusu() {
+  if (!ADSENSE.client || !ADSENSE.slot) return "";     // yapilandirilmadi -> hic cizme
+  return `<aside class="reklam" aria-label="${kacar(t().reklam)}">
+    <span class="reklamEtiket">${kacar(t().reklam)}</span>
+    <ins class="adsbygoogle" style="display:block" data-ad-client="${kacar(ADSENSE.client)}"
+         data-ad-slot="${kacar(ADSENSE.slot)}" data-ad-format="horizontal"
+         data-full-width-responsive="true"></ins>
+  </aside>`;
+}
+
+function reklamlariBaslat() {
+  if (!ADSENSE.client) return;
+  if (!window.__adsYuklendi) {
+    const s = document.createElement("script");
+    s.async = true;
+    s.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=" +
+            encodeURIComponent(ADSENSE.client);
+    s.crossOrigin = "anonymous";
+    document.head.appendChild(s);
+    window.__adsYuklendi = true;
+  }
+  document.querySelectorAll(".reklam ins.adsbygoogle:not([data-adsbygoogle-status])")
+    .forEach(() => { (window.adsbygoogle = window.adsbygoogle || []).push({}); });
+}
+
 const iskelet = (n) => `<div class="rail">${Array.from({length:n},()=>'<div class="sk"></div>').join("")}</div>`;
 
 /* ------------------------------------------------------------------ sayfalar */
@@ -460,7 +499,11 @@ async function sayfaKesfet() {
     }
     parcalar.push(karusel(rafAdi(raf.topic, raf.title), kanallar,
                           raf.topic === "hidden_gems", (raf.channel_ids||[]).length));
+    // Reklam yalnizca ikinci rafin ardinda, tek yerde. Raflarin arasina
+    // serpistirmek keşif akisini bolerdi.
+    if (parcalar.length === 2) parcalar.push(reklamKutusu());
     el("#view").innerHTML = hero + parcalar.join("") + atifBlogu();
+    reklamlariBaslat();
   }
   if (!parcalar.length) el("#view").innerHTML = `<p class="msg">${kacar(t().rafYok)}</p>`;
 }

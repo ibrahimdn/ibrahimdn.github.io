@@ -84,10 +84,18 @@ img{display:block;max-width:100%}
   overflow:hidden;display:flex;min-height:250px;text-align:left;width:calc(100% - 56px)}
 .hero .art{width:46%;flex:none;position:relative;background:var(--raised)}
 .hero .art img{width:100%;height:100%;object-fit:cover}
+/* Hero kapaginda cok yavas bir suzulme -- sayfa canli dursun diye. */
+@keyframes heroSuzulme{0%{transform:scale(1.04) translate3d(0,0,0)}
+  50%{transform:scale(1.11) translate3d(-1.5%,-1%,0)}100%{transform:scale(1.04) translate3d(0,0,0)}}
+.hero .art img:not(.av){animation:heroSuzulme 26s ease-in-out infinite}
 .hero .art::after{content:"";position:absolute;inset:0;
   background:linear-gradient(to right,rgba(12,14,19,.45),rgba(12,14,19,.1) 55%,rgba(22,26,33,.92))}
-.hero .art img.av{object-fit:cover;position:absolute;left:24px;bottom:22px;width:76px;height:76px;border-radius:38px;
-  border:3px solid var(--panel);z-index:2;background:var(--raised)}
+/* `img.av` OZELLIKLE yaziliyor: ustteki `.hero .art img` kurali daha yuksek
+   ozgullukte oldugu icin duz `.hero .av` yazarsak avatar da kapak gibi
+   %100 x %100 gerilir. Bir kere yasandi: kartlarda kanal logosu kapagin
+   uzerine devasa basiliyordu. */
+.hero .art img.av{position:absolute;left:24px;bottom:22px;width:76px;height:76px;border-radius:38px;
+  border:3px solid var(--panel);z-index:2;background:var(--raised);object-fit:cover}
 .hero .body{flex:1;min-width:0;padding:28px 30px;display:flex;flex-direction:column;gap:11px;justify-content:center}
 .hero h2{font:600 26px/1.2 var(--display);letter-spacing:-.015em}
 .hero .sub{color:var(--muted);font:400 13px/1.4 var(--ui)}
@@ -113,16 +121,42 @@ img{display:block;max-width:100%}
 @media (hover:none){.arrow{display:none}}
 
 .card{flex:0 0 262px;scroll-snap-align:start;text-align:left;border-radius:16px;background:var(--panel);
-  border:1px solid var(--line);overflow:hidden;transition:border-color .15s,transform .15s}
-.card:hover{border-color:var(--line2);transform:translateY(-3px)}
+  border:1px solid var(--line);overflow:hidden;
+  transition:border-color .2s,transform .25s cubic-bezier(.2,.7,.3,1),box-shadow .25s}
+.card:hover{border-color:var(--line2);transform:translateY(-4px);
+  box-shadow:0 14px 34px rgba(0,0,0,.45)}
+/* Kartlar sirayla suzulerek geliyor. `--i` her karta JS'te yaziliyor. */
+@keyframes girisAnimasyonu{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.card{animation:girisAnimasyonu .42s cubic-bezier(.2,.7,.3,1) both;
+  animation-delay:calc(var(--i,0) * 45ms)}
+@media (prefers-reduced-motion:reduce){
+  .card{animation:none}
+  .card:hover .cover img:not(.av),.card:hover .cover img.av{transform:none}
+  .card:hover{transform:none}
+  .hero .art img:not(.av){animation:none}
+}
+/* 16/9 — kapak artik video kucuk resmi (kanal kapagi degil), o da 16:9.
+   Once 3/1 denendi: video kucuk resmi ince bir seride kirpiliyor, ustune
+   gradyan biniyor ve kart bombos gorunuyordu. */
 .card .cover{position:relative;aspect-ratio:16/9;background:linear-gradient(135deg,#1C2230,#141821);overflow:hidden}
-.card .cover .blur{position:absolute;inset:-20%;width:140%;height:140%;object-fit:cover;filter:blur(22px) saturate(1.3);opacity:.5}
-.card .cover img{width:100%;height:100%;object-fit:cover}
+.card .cover img{width:100%;height:100%;object-fit:cover;
+  transition:transform .5s cubic-bezier(.2,.7,.3,1),filter .3s}
+.card:hover .cover img:not(.av){transform:scale(1.07);filter:saturate(1.15)}
+/* Kapagi olmayan kanallarda avatari bulaniklastirip zemin yapiyoruz —
+   bos gri dikdortgenden iyi. */
+.card .cover .blur{position:absolute;inset:-20%;width:140%;height:140%;object-fit:cover;
+  filter:blur(22px) saturate(1.3);opacity:.5}
 .card .cover::after{content:"";position:absolute;inset:0;
   background:linear-gradient(to top,rgba(22,26,33,.85),rgba(22,26,33,0) 45%)}
-.card .cover img.av{object-fit:cover;position:absolute;left:14px;bottom:-18px;width:44px;height:44px;border-radius:22px;
-  border:2.5px solid var(--panel);z-index:2;background:var(--raised)}
-.card .txt{padding:26px 14px 15px;display:flex;flex-direction:column;gap:6px}
+/* Avatar kapagin TAM ORTASINDA. `img.av` ozellikle yaziliyor: ustteki
+   `.card .cover img` kurali daha yuksek ozgullukte, duz `.av` yazarsak
+   avatar da kapak gibi %100x%100 gerilir. */
+.card .cover img.av{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:62px;height:62px;border-radius:31px;border:3px solid rgba(12,14,19,.75);
+  z-index:3;background:var(--raised);object-fit:cover;
+  box-shadow:0 6px 18px rgba(0,0,0,.55);transition:transform .35s cubic-bezier(.2,.7,.3,1)}
+.card:hover .cover img.av{transform:translate(-50%,-50%) scale(1.08)}
+.card .txt{padding:14px 14px 16px;display:flex;flex-direction:column;gap:6px;text-align:center}
 .card .t{font:500 13.5px/1.35 var(--ui);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .card .s{font:400 11.5px/1.3 var(--ui);color:var(--muted)}
 .card .b{font:400 12.5px/1.5 var(--ui);color:var(--muted);
@@ -234,7 +268,10 @@ async function sorgu(yol) {
 }
 
 /* YouTube kapak gorselleri parametresiz gelir ve cok buyuk olabilir.
-   `=w<genislik>` ekleyerek boyut istiyoruz; yt3 bunu destekliyor. */
+   `=w<genislik>` ekleyerek boyut istiyoruz; yt3 bunu destekliyor.
+   `serit=true` ise YouTube'un kendi kanal sayfasinda kullandigi
+   "guvenli alan" kirpmasini istiyoruz (1060x175 oraninda): kanalin
+   adinin/gorselinin bulundugu kisim orasi, gerisi cogu kanalda duz zemin. */
 const kapak = (url, w, serit) => !url ? "" :
   url + "=w" + w + (serit ? "-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj" : "");
 
@@ -335,18 +372,24 @@ const atifBlogu = () => `<p class="attrib">${kacar(t().atif)}</p>`;
    cikiyor. Onceki surumde her kartta vardi -- konu raflari da cevherleri
    one aldigi icin ekran bastan asagi ayni rozetle doluyordu ve rozet
    hicbir sey ayirt etmez hale gelmisti. */
-function kart(c, rozet) {
-  // KAPAK ONCELIGI: en cok izlenen videonun kucuk resmi > kanal kapagi > bulanik avatar.
-  // Olculdu (60 kanalluk TR ornegi): 60/60 kanalda video kucuk resmi var, yalnizca
-  // 4/60 kanalda YouTube kapak gorseli var -- kucuk kanallarin cogu kapak koymuyor.
-  // Kapagi birincil yapinca kartlarin neredeyse hepsi bos gorunuyordu.
+function kart(c, rozet, sira) {
+  // KAPAK ONCELIGI: kanalin KENDI kapak gorseli once, son videonun kucuk
+  // resmi yedek. Kanalin kapagi kanala ait bir tasarim; video kucuk resmi
+  // gecici bir icerik. Kapagi olan kanalda onu gostermek dogru olan.
+  //
+  // NOT: 20 Eylul'de bir ara video kucuk resmi birincil yapilmisti, cunku
+  // olcumde kanallarin yalnizca %7'sinde kapak gorunuyordu. O olcum
+  // YANILTICIYDI: eksiklik YouTube'da degil bizdeydi -- brandingSettings
+  // cagriya 15 Eylul'de eklendi, daha once taranmis satirlar bos kaldi.
+  // 13 Eylul sonrasi taranan kanallarin %89'unda kapak var.
+  // Duzeltme: `crawler/pipeline.py > backfill_banners`.
   const vid = (Array.isArray(c.top_videos) && c.top_videos[0] && c.top_videos[0].thumbnail_url) || "";
-  const kap = vid || kapak(c.banner_url, 640, true);
-  const avSrc = kacar(c.thumbnail_url || "");
-  return `<button class="card" data-kanal="${kacar(c.id)}">
+  const kap = kapak(c.banner_url, 640, true) || vid;
+  const av = kacar(c.thumbnail_url || "");
+  return `<button class="card" style="--i:${sira || 0}" data-kanal="${kacar(c.id)}">
     <div class="cover">
       ${kap ? `<img loading="lazy" src="${kacar(kap)}" alt="">`
-            : (avSrc ? `<img class="blur" loading="lazy" src="${avSrc}" alt="" aria-hidden="true">` : "")}
+            : (av ? `<img class="blur" loading="lazy" src="${av}" alt="" aria-hidden="true">` : "")}
       ${rozet && c.is_hidden_gem ? `<span class="gem">${kacar(t().gem)}</span>` : ""}
       <img class="av" loading="lazy" src="${kacar(c.thumbnail_url||"")}" alt="" width="44" height="44">
     </div>
@@ -363,7 +406,7 @@ function karusel(baslik, kanallar, rozet, adet) {
     <div class="bar"><h2>${kacar(baslik)}</h2>
       <span class="count">${sayi(adet || kanallar.length)} ${kacar(t().kanal)}</span></div>
     <button class="arrow l" data-kaydir="-1" aria-label="${kacar(t().sola)}">‹</button>
-    <div class="rail">${kanallar.map(c => kart(c, rozet)).join("")}</div>
+    <div class="rail">${kanallar.map((c, i) => kart(c, rozet, i)).join("")}</div>
     <button class="arrow r" data-kaydir="1" aria-label="${kacar(t().saga)}">›</button>
   </section>`;
 }
@@ -474,7 +517,7 @@ async function sayfaKanal(id) {
     [tarih(c.last_video_at), t().sonYukleme],
   ];
   if (c.rating_count) ist.push([Number(c.rating_avg).toFixed(1) + "/5", t().puan]);
-  const kap = kapak(c.banner_url, 1200, true);
+  const kap = kapak(c.banner_url, 1200, true);   // .dbanner 6/1, serit ona oturuyor
 
   el("#view").innerHTML = `
   <div class="detail">

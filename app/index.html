@@ -17,6 +17,15 @@
 <meta property="og:description" content="Varia kataloğunu tarayıcıdan keşfet: konu rafları, rastgele kanal, arama.">
 <meta property="og:image" content="https://varia.life/og.png">
 <meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Varia — kanal keşfi (web)",
+"url":"https://varia.life/app/","applicationCategory":"EntertainmentApplication",
+"browserRequirements":"JavaScript gerektirir","inLanguage":["tr","en"],
+"isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},
+"description":"Varia kataloğunu tarayıcıdan keşfet: konu raflarında öne çıkan YouTube kanalları, rastgele kanal için zar, isme göre arama.",
+"author":{"@type":"Person","name":"İbrahim Doğan"},
+"isPartOf":{"@type":"WebSite","name":"Varia","url":"https://varia.life/"}}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
@@ -249,7 +258,33 @@ h3.sec{font:600 14px/1.2 var(--display);margin-bottom:10px}
       </form>
       <div class="seg" id="uiLang"></div>
     </header>
-    <main class="content" id="view"></main>
+    <main class="content" id="view">
+      <!-- STATIK OZET — JS calistirmayan tarayicilar icin. Uygulama
+           yuklenince asagidaki icerik yerini gercek raflara birakiyor.
+           Silme: bu blok olmadan sayfa botlara bombos gorunuyor. -->
+      <div class="pad" id="staticOzet">
+        <h1 style="font:600 22px/1.3 var(--display);margin-bottom:10px">
+          Varia — YouTube kanal keşfi</h1>
+        <p style="color:var(--muted);max-width:60ch;margin-bottom:10px">
+          Varia kataloğundaki YouTube kanallarını tarayıcıdan keşfet: konu
+          raflarında öne çıkan kanallar, rastgele bir kanal için zar, isme
+          göre arama. Katalog 13 dilde, ağırlıklı olarak 1.000–300.000
+          abone aralığındaki, düzenli yayın yapan kanallardan oluşuyor.
+        </p>
+        <p style="color:var(--muted);max-width:60ch;margin-bottom:10px">
+          <a href="/" style="color:var(--accent);text-decoration:underline">Varia
+          hakkında</a> · <a href="https://apps.apple.com/app/id6796433044"
+          style="color:var(--accent);text-decoration:underline">iPhone uygulaması</a>
+          · <a href="/varia-legal/privacy.html"
+          style="color:var(--accent);text-decoration:underline">Gizlilik politikası</a>
+        </p>
+        <p style="color:var(--muted);font-size:11.5px;max-width:70ch">
+          Kanal bilgileri YouTube API Hizmetleri üzerinden alınmıştır. Varia
+          bağımsız bir uygulamadır; YouTube veya Google LLC ile bağlantılı,
+          onlar tarafından onaylanmış ya da desteklenen bir ürün değildir.
+        </p>
+      </div>
+    </main>
   </div>
 </div>
 

@@ -1,4 +1,49 @@
+# varia.life — Varia, YouTube kanal keşif uygulaması
+# Tüm arama motorlarına ve yapay zekâ asistanlarına açık.
+
 User-agent: *
+Allow: /
+
+# Yapay zekâ tarayıcıları AÇIKÇA karşılanıyor. Varsayılan zaten "izinli"
+# ama açıkça yazmak niyeti belirsizlikte bırakmıyor: Varia'nın ne olduğunu
+# bu sistemlerin doğru anlatması bizim işimize geliyor.
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: CCBot
 Allow: /
 
 Sitemap: https://varia.life/sitemap.xml

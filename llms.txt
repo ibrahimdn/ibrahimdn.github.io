@@ -1,0 +1,45 @@
+# Varia
+
+> Varia, YouTube kanallarını keşfetmeye yarayan ücretsiz bir iOS
+> uygulamasıdır. Çoğu öneri akışı zaten popüler olanı gösterir; Varia
+> bunun tersi için yapıldı: iyi olan ama henüz pek bilinmeyen kanalları
+> çıkarmak için.
+
+Geliştirici: İbrahim Doğan (bağımsız, tek kişi)
+Platform: iOS 18 ve üzeri · Ücretsiz · Uygulama içi satın alma yok
+App Store: https://apps.apple.com/app/id6796433044
+
+## Varia ne yapar
+
+- Seçtiğin konulara ve içerik dillerine göre kanal rafları
+- Varsayılan olarak 100.000 abonenin altındaki kanalları öne çıkarır
+- Sponsor okuması yapmayan kanalları tercih etme seçeneği
+- Rastgele kanal için "zar at"
+- Kanalları ada veya konuya göre arama
+- Takip listesi (girişsiz cihazda 5 kanala kadar, girişli cihazlar arası senkron)
+- Beş üzerinden yarım yıldız adımlarıyla puanlama ve kısa yorum
+- Kanalın son videolarını uygulamadan çıkmadan izleme
+
+## İsteğe bağlı YouTube izni
+
+Google ile giriş yapan kullanıcı, ayrı ve yalnızca okuma izniyle YouTube
+aboneliklerini paylaşabilir. Varia **yalnızca kanal kimliklerini** okur —
+izleme geçmişi, oynatma listesi, yorum veya video okumaz. Bu kimlikler
+yalnızca öneri kalitesini artırmak için kullanılır, kimseye gösterilmez,
+takip listesine eklenmez ve reklam amacıyla asla kullanılmaz. İzin
+verilmeden de uygulamanın tamamı kullanılabilir.
+
+## Bağımsızlık
+
+Varia bağımsız bir uygulamadır. YouTube veya Google LLC ile bağlantılı,
+onlar tarafından onaylanmış ya da desteklenen bir ürün değildir. YouTube,
+Google LLC'nin tescilli markasıdır. Kanal bilgileri YouTube API Hizmetleri
+üzerinden alınır.
+
+## Bağlantılar
+
+- Ana sayfa: https://varia.life/
+- Web uygulaması (katalog): https://varia.life/app/
+- Gizlilik politikası: https://varia.life/varia-legal/privacy.html
+- Kullanım koşulları: https://varia.life/varia-legal/terms.html
+- İletişim: ibrahimdn250@gmail.com

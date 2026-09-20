@@ -336,7 +336,12 @@ const atifBlogu = () => `<p class="attrib">${kacar(t().atif)}</p>`;
    one aldigi icin ekran bastan asagi ayni rozetle doluyordu ve rozet
    hicbir sey ayirt etmez hale gelmisti. */
 function kart(c, rozet) {
-  const kap = kapak(c.banner_url, 640, true);
+  // KAPAK ONCELIGI: en cok izlenen videonun kucuk resmi > kanal kapagi > bulanik avatar.
+  // Olculdu (60 kanalluk TR ornegi): 60/60 kanalda video kucuk resmi var, yalnizca
+  // 4/60 kanalda YouTube kapak gorseli var -- kucuk kanallarin cogu kapak koymuyor.
+  // Kapagi birincil yapinca kartlarin neredeyse hepsi bos gorunuyordu.
+  const vid = (Array.isArray(c.top_videos) && c.top_videos[0] && c.top_videos[0].thumbnail_url) || "";
+  const kap = vid || kapak(c.banner_url, 640, true);
   const avSrc = kacar(c.thumbnail_url || "");
   return `<button class="card" data-kanal="${kacar(c.id)}">
     <div class="cover">
@@ -364,7 +369,8 @@ function karusel(baslik, kanallar, rozet, adet) {
 }
 
 function heroKart(c) {
-  const kap = kapak(c.banner_url, 900);
+  const kap = kapak(c.banner_url, 900) ||
+    ((Array.isArray(c.top_videos) && c.top_videos[0] && c.top_videos[0].thumbnail_url) || "");
   return `<button class="hero" data-kanal="${kacar(c.id)}">
     <div class="art">
       ${kap ? `<img src="${kacar(kap)}" alt="">` : ""}

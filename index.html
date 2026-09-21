@@ -570,19 +570,27 @@ function reklamlariBaslat() {
     window.__adsYuklendi = true;
   }
   document.querySelectorAll(".reklam ins.adsbygoogle:not([data-adsbygoogle-status])")
-    .forEach(() => { (window.adsbygoogle = window.adsbygoogle || []).push({}); });
+    .forEach(() => {
+      try { (window.adsbygoogle = window.adsbygoogle || []).push({}); }
+      catch (e) { console.warn("AdSense push:", e && e.message); }
+    });
 
   // Kutu varsayilan olarak GIZLI; yalnizca gercekten reklam gelirse aciliyor.
   // Bos bir "REKLAM" kutusu kullaniciya hicbir sey vermiyor, sadece yer kapliyor.
   document.querySelectorAll(".reklam").forEach((kutu) => {
     const ins = kutu.querySelector("ins.adsbygoogle");
     if (!ins) return;
+    // DIKKAT: kutuyu PESIN gizleme. display:none olan bir ins sifir
+    // genislikte olculur ve push() hata firlatir. Once olculsun, sonra
+    // sonuca gore kapatalim.
     const bak = () => {
       const d = ins.getAttribute("data-ad-status");
-      kutu.style.display = d === "filled" ? "" : "none";
+      if (d === "filled") kutu.style.display = "";
+      else if (d) kutu.style.display = "none";
     };
     new MutationObserver(bak).observe(ins, { attributes: true, attributeFilter: ["data-ad-status"] });
-    bak();
+    // AdSense betigi hic calismazsa durum hic yazilmaz; 6 sn sonra kapat.
+    setTimeout(() => { if (!ins.getAttribute("data-ad-status")) kutu.style.display = "none"; }, 6000);
   });
 }
 

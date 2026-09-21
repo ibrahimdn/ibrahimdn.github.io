@@ -116,7 +116,7 @@ img{display:block;max-width:100%}
    ozgullukte oldugu icin duz `.hero .av` yazarsak avatar da kapak gibi
    %100 x %100 gerilir. Bir kere yasandi: kartlarda kanal logosu kapagin
    uzerine devasa basiliyordu. */
-.hero .art img.av{position:absolute;left:24px;bottom:22px;width:76px;height:76px;border-radius:38px;
+.hero .art img.av{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:76px;height:76px;border-radius:38px;
   border:3px solid var(--panel);z-index:2;background:var(--raised);object-fit:cover}
 .hero .body{flex:1;min-width:0;padding:28px 30px;display:flex;flex-direction:column;gap:11px;justify-content:center}
 .hero h2{font:600 26px/1.2 var(--display);letter-spacing:-.015em}
@@ -170,6 +170,7 @@ img{display:block;max-width:100%}
   .card:hover .cover img:not(.av),.card:hover .cover img.av{transform:none}
   .card:hover{transform:none}
   .hero .art img:not(.av){animation:none}
+  .card:hover{transform:none}
 }
 /* 16/9 — kapak artik video kucuk resmi (kanal kapagi degil), o da 16:9.
    Once 3/1 denendi: video kucuk resmi ince bir seride kirpiliyor, ustune
@@ -570,6 +571,19 @@ function reklamlariBaslat() {
   }
   document.querySelectorAll(".reklam ins.adsbygoogle:not([data-adsbygoogle-status])")
     .forEach(() => { (window.adsbygoogle = window.adsbygoogle || []).push({}); });
+
+  // Kutu varsayilan olarak GIZLI; yalnizca gercekten reklam gelirse aciliyor.
+  // Bos bir "REKLAM" kutusu kullaniciya hicbir sey vermiyor, sadece yer kapliyor.
+  document.querySelectorAll(".reklam").forEach((kutu) => {
+    const ins = kutu.querySelector("ins.adsbygoogle");
+    if (!ins) return;
+    const bak = () => {
+      const d = ins.getAttribute("data-ad-status");
+      kutu.style.display = d === "filled" ? "" : "none";
+    };
+    new MutationObserver(bak).observe(ins, { attributes: true, attributeFilter: ["data-ad-status"] });
+    bak();
+  });
 }
 
 const iskelet = (n) => `<div class="rail">${Array.from({length:n},()=>'<div class="sk"></div>').join("")}</div>`;

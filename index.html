@@ -135,6 +135,10 @@ img{display:block;max-width:100%}
 /* Onbellekten geri donulunce giris animasyonu TEKRAR OYNAMASIN -- geri
    tusunda her seyin yeniden dogmasi takilma hissi veriyordu. */
 #view.nofx .card,#view.nofx .hero{animation:none}
+/* Reklam dolmadiysa kutu yer kaplamasin -- bos bir "REKLAM" kutusu
+   kullaniciya hicbir sey vermiyor. AdSense doldurmadigini data-ad-status
+   ile kendisi bildiriyor. */
+.reklam:has(ins[data-ad-status="unfilled"]){display:none}
 .appAlt{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:36px 28px 0;
   padding:22px 24px;border-radius:18px;border:1px solid var(--line2);background:var(--panel)}
 .appAlt img{border-radius:13px;flex:none}

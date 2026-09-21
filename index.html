@@ -613,26 +613,51 @@ async function sayfaKesfet() {
                              `&select=topic,title,channel_ids,position&order=position.asc&limit=10`);
   if (!raflar.length) { el("#view").innerHTML = `<p class="msg">${kacar(t().rafYok)}</p>`; return; }
 
-  const parcalar = [];
-  let hero = "";
+  // TITREME DUZELTMESI (22 Eylul 2026) -- kullanici "anasayfa titriyor" dedi.
+  //
+  // SEBEP: bu dongunun ICINDE her turda `el("#view").innerHTML = ...`
+  // vardi. 10 raf geldigi icin gorunum 10 KEZ bastan yaziliyordu: ekrandaki
+  // her sey siliniyor, butun kartlar yeniden kuruluyor, giris animasyonlari
+  // bastan oynuyordu. Gorulen titreme buydu.
+  //
+  // IKINCI ZARAR: reklamlariBaslat() de 10 kez cagriliyordu. Her yeniden
+  // cizimde ins etiketi DOM"dan kopuyor, AdSense onu sifir genislikte olcup
+  // "No slot size for availableWidth=0" firlatiyordu.
+  //
+  // COZUM: ekranda duran hicbir sey silinmiyor; yalnizca YENI parca sona
+  // EKLENIYOR. Ilerlemeli gosterim korunuyor, titreme ve reklam hatasi yok.
+  const v = el("#view");
+  let ilk = true, rafSayisi = 0, reklamKondu = false;
+  const ekle = (html) => {
+    if (ilk) { v.innerHTML = ""; ilk = false; }   // iskeleti ilk parcada kaldir
+    v.insertAdjacentHTML("beforeend", html);
+  };
+
   for (const raf of raflar) {
-    // Rafta duran id'lerin bir kismi artik uygun olmayabilir; fazladan cekip
+    // Rafta duran id"lerin bir kismi artik uygun olmayabilir; fazladan cekip
     // filtreden SONRA kesiyoruz ki karusel eksik kalmasin.
     const kanallar = (await kanallariGetir((raf.channel_ids || []).slice(0, 40))).slice(0, 18);
     if (kanallar.length < 4) continue;
-    if (!hero) {
+
+    if (!rafSayisi) {
       const one = kanallar.find(c => c.banner_url && c.blurb) || kanallar[0];
-      hero = heroKart(one);
+      ekle(heroKart(one));
     }
-    parcalar.push(karusel(rafAdi(raf.topic, raf.title), kanallar,
-                          raf.topic === "hidden_gems", (raf.channel_ids||[]).length));
+    ekle(karusel(rafAdi(raf.topic, raf.title), kanallar,
+                 raf.topic === "hidden_gems", (raf.channel_ids || []).length));
+    rafSayisi++;
+
     // Reklam yalnizca ikinci rafin ardinda, tek yerde. Raflarin arasina
-    // serpistirmek keşif akisini bolerdi.
-    if (parcalar.length === 2) parcalar.push(reklamKutusu());
-    el("#view").innerHTML = hero + parcalar.join("") + atifBlogu();
-    reklamlariBaslat();
+    // serpistirmek kesif akisini bolerdi.
+    if (rafSayisi === 2 && !reklamKondu) {
+      reklamKondu = true;
+      ekle(reklamKutusu());
+      reklamlariBaslat();   // kutu DOM"da ve genisligi var; TEK sefer
+    }
   }
-  if (!parcalar.length) el("#view").innerHTML = `<p class="msg">${kacar(t().rafYok)}</p>`;
+
+  if (!rafSayisi) { v.innerHTML = `<p class="msg">${kacar(t().rafYok)}</p>`; return; }
+  ekle(atifBlogu());
 }
 
 async function sayfaZar(otomatik) {

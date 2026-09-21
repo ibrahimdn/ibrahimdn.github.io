@@ -761,6 +761,17 @@ function git(hedef) { location.hash = hedef.startsWith("#") ? hedef : "#" + hede
    dildeki katalog ekranda kalirdi.                                     */
 const onbellek = { html: "", y: 0, geri: false };
 
+// Onbellegi temizlerken #view uzerindeki "kesfet" isaretini de silmek
+// ZORUNLU. Yoksa: dil dugmesi onbellek.html'i bosaltiyor, hemen ardindan
+// cagrilan yonlendir() ekrandaki (ESKI DILDEKI) gorunumu isarete bakip
+// yeniden onbellege yaziyor, kesfetGoster() de onu geri koyuyordu.
+// Sonuc: dil butonu basiliyor, katalog degismiyordu. 22 Eylul'de olculdu.
+function onbellekTemizle() {
+  onbellek.html = "";
+  const v = document.querySelector("#view");
+  if (v) delete v.dataset.sayfa;
+}
+
 async function kesfetGoster() {
   const v = el("#view");
   if (onbellek.html) {
@@ -821,9 +832,9 @@ document.addEventListener("click", (e) => {
   const nav = e.target.closest("[data-git]");
   if (nav) { git(nav.dataset.git); return; }
   const dil = e.target.closest("[data-dil]");
-  if (dil) { durum.dil = dil.dataset.dil; localStorage.setItem("varia.dil", durum.dil); onbellek.html = ""; kabuk(); yonlendir(); return; }
+  if (dil) { durum.dil = dil.dataset.dil; localStorage.setItem("varia.dil", durum.dil); onbellekTemizle(); kabuk(); yonlendir(); return; }
   const ui = e.target.closest("[data-ui]");
-  if (ui) { durum.ui = ui.dataset.ui; localStorage.setItem("varia.ui", durum.ui); onbellek.html = ""; kabuk(); yonlendir(); return; }
+  if (ui) { durum.ui = ui.dataset.ui; localStorage.setItem("varia.ui", durum.ui); onbellekTemizle(); kabuk(); yonlendir(); return; }
 });
 el("#searchForm").addEventListener("submit", (e) => {
   e.preventDefault();

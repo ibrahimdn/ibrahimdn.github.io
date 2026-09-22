@@ -138,7 +138,7 @@ img{display:block;max-width:100%}
 /* Reklam dolmadiysa kutu yer kaplamasin -- bos bir "REKLAM" kutusu
    kullaniciya hicbir sey vermiyor. AdSense doldurmadigini data-ad-status
    ile kendisi bildiriyor. */
-.reklam:has(ins[data-ad-status="unfilled"]){display:none}
+/* (Eski .reklam:has(unfilled) kurali kaldirildi -- yerini .dolu sinifi aldi.) */
 .appAlt{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:36px 28px 0;
   padding:22px 24px;border-radius:18px;border:1px solid var(--line2);background:var(--panel)}
 .appAlt img{border-radius:13px;flex:none}
@@ -245,9 +245,16 @@ img{display:block;max-width:100%}
 h3.sec{font:600 14px/1.2 var(--display);margin-bottom:10px}
 .desc{color:var(--muted);font:400 13.5px/1.6 var(--ui);white-space:pre-wrap}
 
-.reklam{margin-inline:28px;padding:10px 14px 14px;border-radius:14px;background:var(--sunken);
+/* Reklam kutusu: HER ZAMAN tam genislikte duruyor ama reklam gelmeden
+   cerceve/dolgu/etiket yok -- bos ins sifir yukseklikte oldugu icin
+   ekranda hicbir sey gorunmuyor. Kutuyu display:none yapmak YANLIS
+   olurdu: gizli bir ins sifir genislikte olculur ve Google oraya
+   reklam cizemez ("No slot size for availableWidth=0"). */
+.reklam{margin-inline:28px;border-radius:14px}
+.reklam.dolu .reklamEtiket{display:block}
+.reklam.dolu{padding:10px 14px 14px;background:var(--sunken);
   border:1px solid var(--line);min-height:120px}
-.reklamEtiket{display:block;font:500 9.5px/1 var(--display);letter-spacing:.11em;
+.reklamEtiket{display:none;font:500 9.5px/1 var(--display);letter-spacing:.11em;
   text-transform:uppercase;color:var(--muted);margin-bottom:8px}
 .attrib{color:var(--muted);font:400 11.5px/1.6 var(--ui);border-top:1px solid var(--line);
   padding:16px 28px 0;margin-inline:0}
@@ -612,12 +619,11 @@ function reklamlariBaslat() {
     // sonuca gore kapatalim.
     const bak = () => {
       const d = ins.getAttribute("data-ad-status");
-      if (d === "filled") kutu.style.display = "";
-      else if (d) kutu.style.display = "none";
+      kutu.classList.toggle("dolu", d === "filled");
     };
     new MutationObserver(bak).observe(ins, { attributes: true, attributeFilter: ["data-ad-status"] });
     // AdSense betigi hic calismazsa durum hic yazilmaz; 6 sn sonra kapat.
-    setTimeout(() => { if (!ins.getAttribute("data-ad-status")) kutu.style.display = "none"; }, 6000);
+    // Zaman asimi yedegine gerek kalmadi: kutu zaten dolmadan gorunmuyor.
   });
 }
 

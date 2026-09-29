@@ -372,11 +372,21 @@ h3.sec{font:600 14px/1.2 var(--display);margin-bottom:10px}
    Google AdSense. `client` BOS oldugu surece sayfada reklamla ilgili
    HICBIR SEY cizilmiyor, hicbir script yuklenmiyor, hicbir cerez
    dusmuyor -- yani su an site reklamsiz.
+   30 EYLUL 2026: AdSense varia.life'i "Low value content" gerekcesiyle
+   REDDETTI. Olculdu: reklamin konacagi bu sayfanin KENDI metni 87 kelime,
+   sitenin tamami 4 adres, Search Console'da 28 gunde 0 tiklama. Onay
+   olmadan reklam zaten hic dolmuyordu; kodu acik birakmak yalnizca
+   ziyaretciye bir Google betigi yukletip cerez dusuruyordu. Kapatildi.
+
+   GERI ACMAK ICIN iki deger (AdSense'te duruyorlar, silinmediler):
+     client "ca-pub-6179071130548709"  ·  slot "1285240006"
+   Acmadan once site/adsense-adimlar.md -> "30 Eylul: REDDEDILDI".
+
    Yayina almak icin: AdSense hesabi acildiktan sonra buraya
    "ca-pub-XXXXXXXXXXXXXXXX" ve olusturulan birim kimligi yazilacak,
    ayrica /ads.txt yayimlanacak ve GIZLILIK POLITIKASI guncellenecek
    (bkz. site/reklam-plani.md). Uc adim birlikte yapilmali. */
-const ADSENSE = { client: "ca-pub-6179071130548709", slot: "1285240006" };
+const ADSENSE = { client: "", slot: "" };   // KAPALI -- asagidaki nota bak
 
 const SB  = "https://qfxuemwstrqgksclnlwn.supabase.co/rest/v1";
 const KEY = "sb_publishable_xovTcxLbGn9DTsHMrUrE9w_YiFofjPS";
